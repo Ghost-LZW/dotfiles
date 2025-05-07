@@ -1,0 +1,6 @@
+{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $rich := promptBoolOnce . "rich" "Rich or not" -}}
+
+[data]
+    email = {{ $email | quote }}
+    rich = {{ $rich }}

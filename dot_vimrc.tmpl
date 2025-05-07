@@ -1,0 +1,124 @@
+{{ if .rich -}}
+call plug#begin()
+
+Plug 'alker0/chezmoi.vim'
+Plug 'tpope/vim-sensible'
+Plug 'solyarisoftware/Highlight.vim'
+Plug 'vim-autoformat/vim-autoformat'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'vim-autoformat/vim-autoformat'
+Plug 'Vimjas/vint'
+
+call plug#end()
+{{ end -}}
+
+set backspace=indent,eol,start
+syntax on
+set number
+set tabstop=4
+set shiftwidth=4
+set cindent
+colo evening
+set mouse=a
+
+inoremap {<CR> {<CR>}<ESC>O
+
+inoremap ( ()<ESC>i
+inoremap [ []<ESC>i
+inoremap { {}<ESC>i
+inoremap " ""<ESC>i
+inoremap ' ''<ESC>i
+inoremap <C-h> <left>
+inoremap <C-j> <down>
+inoremap <C-k> <up>
+inoremap <C-l> <right>
+
+func SkipPair()
+    if getline('.')[col('.') - 1] ==# ')'
+       \ || getline('.')[col('.') - 1]  ==# ']'
+       \ || getline('.')[col('.') - 1] ==# '"'
+       \ || getline('.')[col('.') - 1] ==# "'"
+       \ || getline('.')[col('.') - 1] ==# '}'
+       \ || getline('.')[col('.') - 1] ==# '>'
+        return "\<ESC>la"
+    else
+        return "\t"
+    endif
+endfunc
+
+func BackPair()
+    if (getline('.')[col('.') - 1] ==# ')' && getline('.')[col('.')-2] ==# '(')
+        \ || (getline('.')[col('.') - 1]  ==# ']' && getline('.')[col('.') - 2]  ==# '[')
+        \ || (getline('.')[col('.') - 1] ==# '"' && getline('.')[col('.') - 2]  ==# '"')
+        \ || (getline('.')[col('.') - 1] ==# "'" && getline('.')[col('.') - 2]  ==# "'")
+        \ || (getline('.')[col('.') - 1] ==# '}' && getline('.')[col('.') - 2]  ==# '{')
+        \ || (getline('.')[col('.') - 1] ==# '>' && getline('.')[col('.') - 2]  ==# '<')
+        if strchars(getline('.')) ==# col('.')
+            return "\<ESC>xxa"
+        else
+            return "\<ESC>xxi"
+        endif
+    else
+        return nr2char(8)
+    endif
+endfunc
+
+inoremap <TAB> <c-r>=SkipPair()<CR>
+inoremap <BS> <c-r>=BackPair()<CR>
+
+map <F9> : call CR()<CR>
+func! CR()
+    if &filetype ==# 'cpp'
+        exec 'w'
+        exec '!clang++ % -O2 -Wall -std=c++17 -D DEBUG -o %<'
+        exec '! ./%< && rm ./%<'
+    endif
+    if &filetype ==# 'python'
+        exec 'w'
+        exec '!python3 %'
+    endif
+    if &filetype ==# 'sh'
+        exec 'w'
+        exec '!zsh %'
+    endif
+endfunc
+
+map <F8> : call CRR()<CR>
+func! CRR()
+    if &filetype ==# 'cpp'
+        exec 'w'
+        exec '!clang++ % -O2 -Wall -std=c++17 -D DEBUG -o %<'
+        exec '! ./%< < rand.in && rm ./%<'
+    endif
+    if &filetype ==# 'python'
+        exec 'w'
+        exec '!python3 %'
+    endif
+endfunc
+
+map <F3> ggvG"+y
+
+augroup editfile
+    autocmd BufNewFile *.cpp,*.cc,*.[ch],*.sh,*.java,*.py exec ':call SetTitle()'
+    autocmd BufReadPre *.py exec 'set expandtab'
+    autocmd BufReadPre *.py exec 'set softtabstop=4'
+augroup END
+
+func SetTitle()
+    if &filetype ==# 'sh'
+        call setline(1,'#########################################################################')
+        call append(line('.'), '# File Name: '.expand('%'))
+        call append(line('.')+1, '# Author: ghost_lzw')
+        call append(line('.')+2, '# mail: lanzongwei541@gmail.com')
+        call append(line('.')+3, '# Created Time: '.strftime('%c'))
+        call append(line('.')+4, '#########################################################################')
+        call append(line('.')+5, '#!/bin/bash')
+        call append(line('.')+6, '')
+    elseif &filetype !=# 'python'
+        call setline(1, '// Copyright '.strftime('%Y').' Ghost-LZW')
+        call append(line('.'), '// Author: lanzongwei541@gmail.com (ghost-lzw)')
+        call append(line('.')+1, '')
+    endif
+    normal! G
+endfunc
