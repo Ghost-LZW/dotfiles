@@ -1,3 +1,6 @@
+set encoding=utf-8 nobomb
+scriptencoding utf-8
+
 {{ if .rich -}}
 call plug#begin()
 
@@ -13,14 +16,25 @@ Plug 'Vimjas/vint'
 call plug#end()
 {{ end -}}
 
-set backspace=indent,eol,start
 syntax on
+set backspace=indent,eol,start
 set number
 set tabstop=4
 set shiftwidth=4
 set cindent
-colo evening
 set mouse=a
+set clipboard=unnamed
+set binary
+set noendofline
+set exrc
+set cursorline
+set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
+set list
+set hlsearch
+
+" Theme
+set background=dark
+colorscheme evening
 
 inoremap {<CR> {<CR>}<ESC>O
 
@@ -36,7 +50,7 @@ inoremap <C-l> <right>
 
 func SkipPair()
     if getline('.')[col('.') - 1] ==# ')'
-       \ || getline('.')[col('.') - 1]  ==# ']'
+       \ || getline('.')[col('.') - 1] ==# ']'
        \ || getline('.')[col('.') - 1] ==# '"'
        \ || getline('.')[col('.') - 1] ==# "'"
        \ || getline('.')[col('.') - 1] ==# '}'
@@ -49,11 +63,11 @@ endfunc
 
 func BackPair()
     if (getline('.')[col('.') - 1] ==# ')' && getline('.')[col('.')-2] ==# '(')
-        \ || (getline('.')[col('.') - 1]  ==# ']' && getline('.')[col('.') - 2]  ==# '[')
-        \ || (getline('.')[col('.') - 1] ==# '"' && getline('.')[col('.') - 2]  ==# '"')
-        \ || (getline('.')[col('.') - 1] ==# "'" && getline('.')[col('.') - 2]  ==# "'")
-        \ || (getline('.')[col('.') - 1] ==# '}' && getline('.')[col('.') - 2]  ==# '{')
-        \ || (getline('.')[col('.') - 1] ==# '>' && getline('.')[col('.') - 2]  ==# '<')
+        \ || (getline('.')[col('.') - 1] ==# ']' && getline('.')[col('.') - 2] ==# '[')
+        \ || (getline('.')[col('.') - 1] ==# '"' && getline('.')[col('.') - 2] ==# '"')
+        \ || (getline('.')[col('.') - 1] ==# "'" && getline('.')[col('.') - 2] ==# "'")
+        \ || (getline('.')[col('.') - 1] ==# '}' && getline('.')[col('.') - 2] ==# '{')
+        \ || (getline('.')[col('.') - 1] ==# '>' && getline('.')[col('.') - 2] ==# '<')
         if strchars(getline('.')) ==# col('.')
             return "\<ESC>xxa"
         else
