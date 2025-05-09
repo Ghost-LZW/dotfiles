@@ -31,6 +31,8 @@ set cursorline
 set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
 set list
 set hlsearch
+set expandtab
+set softtabstop=4
 
 " Theme
 set background=dark
@@ -115,8 +117,6 @@ map <F3> ggvG"+y
 
 augroup editfile
     autocmd BufNewFile *.cpp,*.cc,*.[ch],*.sh,*.java,*.py exec ':call SetTitle()'
-    autocmd BufReadPre *.py exec 'set expandtab'
-    autocmd BufReadPre *.py exec 'set softtabstop=4'
 augroup END
 
 func SetTitle()
