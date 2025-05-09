@@ -1,10 +1,12 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $name := promptStringOnce . "name" "Name of user" -}}
+{{- $hostname := promptStringOnce . "hostname" "Name of host" -}}
 {{- $shell_theme := promptString "shell theme" "robbyrussell" -}}
 {{- $rich := promptBoolOnce . "rich" "Rich or not" -}}
 
 [data]
     email = {{ $email | quote }}
     name = {{ $name | quote }}
+    hostname = {{ $hostname | quote }}
     shell_theme = {{ $shell_theme | quote }}
     rich = {{ $rich }}
