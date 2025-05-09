@@ -10,7 +10,7 @@ typeset -U cplus_include_path
 typeset -U dyld_library_path
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/lanzongwei/.oh-my-zsh"
+export ZSH="${HOME}/.oh-my-zsh"
 
 # TODO(lzw): use proxy path from config
 pexec() {
