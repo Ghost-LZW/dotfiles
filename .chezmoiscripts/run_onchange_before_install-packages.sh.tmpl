@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eufo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+sudo apt install tmux
+{{ else if eq .chezmoi.os "darwin" -}}
+{{ $brews := list
+     "tmux" -}}
+{{ $casks := list -}}
+
+brew bundle --file=/dev/stdin <<EOF
+{{ range ($brews | sortAlpha | uniq) -}}
+brew "{{ . }}"
+{{ end -}}
+{{ range ($casks | sortAlpha | uniq) -}}
+cask "{{ . }}"
+{{ end -}}
+EOF
+{{ end -}}
