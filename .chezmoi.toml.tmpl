@@ -1,7 +1,7 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $name := promptStringOnce . "name" "Name of user" -}}
 {{- $hostname := promptStringOnce . "hostname" "Name of host" -}}
-{{- $shell_theme := promptString "shell theme" "robbyrussell" -}}
+{{- $shell_theme := promptStringOnce . "shell_theme" "shell theme" "robbyrussell" -}}
 {{- $rich := promptBoolOnce . "rich" "Rich or not" -}}
 
 [data]
