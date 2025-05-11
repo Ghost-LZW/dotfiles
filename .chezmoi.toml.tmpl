@@ -2,11 +2,18 @@
 {{- $name := promptStringOnce . "name" "Name of user" -}}
 {{- $hostname := promptStringOnce . "hostname" "Name of host" -}}
 {{- $shell_theme := promptStringOnce . "shell_theme" "shell theme" "robbyrussell" -}}
+{{- $proxy := promptStringOnce . "proxy" "The proxy for pexec" "127.0.0.1:7890" -}}
 {{- $rich := promptBoolOnce . "rich" "Rich or not" -}}
 
 [data]
-    email = {{ $email | quote }}
-    name = {{ $name | quote }}
-    hostname = {{ $hostname | quote }}
-    shell_theme = {{ $shell_theme | quote }}
-    rich = {{ $rich }}
+  email = {{ $email | quote }}
+  name = {{ $name | quote }}
+  hostname = {{ $hostname | quote }}
+  shell_theme = {{ $shell_theme | quote }}
+  proxy = {{ $proxy | quote }}
+  rich = {{ $rich }}
+
+[diff]
+  {{ if lookPath "diff-so-fancy" -}}
+  pager = "diff-so-fancy | less --tabs=4 -RF"
+  {{- end }}

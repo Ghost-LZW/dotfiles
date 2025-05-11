@@ -5,8 +5,9 @@ set -eufo pipefail
 sudo apt install tmux
 {{ else if eq .chezmoi.os "darwin" -}}
 {{ $brews := list
-     "tmux"
-     "coreutils" -}}
+    "tmux"
+    "coreutils"
+    "autojump" -}}
 {{ $casks := list -}}
 
 brew bundle --file=/dev/stdin <<EOF

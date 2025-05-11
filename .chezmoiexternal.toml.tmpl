@@ -34,6 +34,17 @@
   url = "https://github.com/zsh-users/zsh-autosuggestions.git"
   refreshPeriod = "168h"
 
+[".oh-my-zsh/custom/plugins/gitingore"]
+  type = "git-repo"
+  url = "https://github.com/voronkovich/gitignore.plugin.zsh.git"
+  refreshPeriod = "168h"
+  clone.args = ["--recurse-submodules"]
+
+[".oh-my-zsh/custom/plugins/diff-so-fancy"]
+  type = "git-repo"
+  url = "https://github.com/so-fancy/diff-so-fancy.git"
+  refreshPeriod = "168h"
+
 {{- if eq .shell_theme "powerlevel10k/powerlevel10k" }}
 [".oh-my-zsh/custom/themes/powerlevel10k"]
   type = "git-repo"

@@ -1,26 +1,59 @@
 set encoding=utf-8 nobomb
 scriptencoding utf-8
+set langmenu=en_US
+let $LANG = 'en_US'
 
 {{ if .rich -}}
 call plug#begin()
 
-Plug 'alker0/chezmoi.vim'
-Plug 'tpope/vim-sensible'
-Plug 'solyarisoftware/Highlight.vim'
-Plug 'vim-autoformat/vim-autoformat'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'vim-autoformat/vim-autoformat'
-Plug 'Vimjas/vint'
+  Plug 'alker0/chezmoi.vim'
+  Plug 'tpope/vim-sensible'
+  Plug 'solyarisoftware/Highlight.vim'
+  Plug 'vim-autoformat/vim-autoformat'
+  Plug 'prabirshrestha/vim-lsp'
+  Plug 'mattn/vim-lsp-settings'
+  Plug 'vim-autoformat/vim-autoformat'
+  Plug 'Vimjas/vint'
+  Plug 'NLKNguyen/papercolor-theme'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'tpope/vim-fugitive'
+  Plug 'vim-scripts/headerguard'
+  Plug 'Yggdroot/indentLine'
+  Plug 'kamykn/spelunker.vim'
+  Plug 'leanprover/lean.vim'
+  Plug 'prabirshrestha/asyncomplete.vim'
+  Plug 'prabirshrestha/asyncomplete-lsp.vim'
+  Plug 'joom/latex-unicoder.vim'
+  " Plug 'ggml-org/llama.vim'
+  " Plug 'ycm-core/YouCompleteMe'
 
 call plug#end()
+
+let g:airline_theme='papercolor'
+let g:PaperColor_Theme_Options = {
+  \   'theme': {
+    \     'default': {
+      \       'transparent_background': 0
+        \     }
+    \   }
+  \ }
+
+if executable('lake')
+au User lsp_setup call lsp#register_server({
+    \ 'name': 'lean4-lsp',
+    \ 'cmd': {server_info->['lake', 'serve', '--', '--root='.lsp_settings#root_path(["lakefile.toml"])]},
+    \ 'allowlist': ['lean'],
+    \ 'root_uri': {server_info->lsp_settings#root_path(["lakefile.toml"])},
+    \ })
+endif
 {{ end -}}
 
 syntax on
 set backspace=indent,eol,start
 set number
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set cindent
 set mouse=a
 set clipboard=unnamed
@@ -32,11 +65,16 @@ set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
 set list
 set hlsearch
 set expandtab
-set softtabstop=4
+set softtabstop=2
+set pastetoggle=<F12>
 
 " Theme
 set background=dark
+{{ if .rich -}}
+colorscheme PaperColor
+{{ else }}
 colorscheme evening
+{{- end }}
 
 inoremap {<CR> {<CR>}<ESC>O
 
@@ -51,33 +89,33 @@ inoremap <C-k> <up>
 inoremap <C-l> <right>
 
 func SkipPair()
-    if getline('.')[col('.') - 1] ==# ')'
-       \ || getline('.')[col('.') - 1] ==# ']'
-       \ || getline('.')[col('.') - 1] ==# '"'
-       \ || getline('.')[col('.') - 1] ==# "'"
-       \ || getline('.')[col('.') - 1] ==# '}'
-       \ || getline('.')[col('.') - 1] ==# '>'
-        return "\<ESC>la"
-    else
-        return "\t"
-    endif
+  if getline('.')[col('.') - 1] ==# ')'
+    \ || getline('.')[col('.') - 1] ==# ']'
+    \ || getline('.')[col('.') - 1] ==# '"'
+    \ || getline('.')[col('.') - 1] ==# "'"
+    \ || getline('.')[col('.') - 1] ==# '}'
+    \ || getline('.')[col('.') - 1] ==# '>'
+    return "\<ESC>la"
+  else
+    return "\t"
+  endif
 endfunc
 
 func BackPair()
-    if (getline('.')[col('.') - 1] ==# ')' && getline('.')[col('.')-2] ==# '(')
-        \ || (getline('.')[col('.') - 1] ==# ']' && getline('.')[col('.') - 2] ==# '[')
-        \ || (getline('.')[col('.') - 1] ==# '"' && getline('.')[col('.') - 2] ==# '"')
-        \ || (getline('.')[col('.') - 1] ==# "'" && getline('.')[col('.') - 2] ==# "'")
-        \ || (getline('.')[col('.') - 1] ==# '}' && getline('.')[col('.') - 2] ==# '{')
-        \ || (getline('.')[col('.') - 1] ==# '>' && getline('.')[col('.') - 2] ==# '<')
-        if strchars(getline('.')) ==# col('.')
-            return "\<ESC>xxa"
-        else
-            return "\<ESC>xxi"
-        endif
+  if (getline('.')[col('.') - 1] ==# ')' && getline('.')[col('.')-2] ==# '(')
+    \ || (getline('.')[col('.') - 1] ==# ']' && getline('.')[col('.') - 2] ==# '[')
+    \ || (getline('.')[col('.') - 1] ==# '"' && getline('.')[col('.') - 2] ==# '"')
+    \ || (getline('.')[col('.') - 1] ==# "'" && getline('.')[col('.') - 2] ==# "'")
+    \ || (getline('.')[col('.') - 1] ==# '}' && getline('.')[col('.') - 2] ==# '{')
+    \ || (getline('.')[col('.') - 1] ==# '>' && getline('.')[col('.') - 2] ==# '<')
+    if strchars(getline('.')) ==# col('.')
+      return "\<ESC>xxa"
     else
-        return nr2char(8)
+      return "\<ESC>xxi"
     endif
+  else
+    return nr2char(8)
+  endif
 endfunc
 
 inoremap <TAB> <c-r>=SkipPair()<CR>
@@ -85,54 +123,82 @@ inoremap <BS> <c-r>=BackPair()<CR>
 
 map <F9> : call CR()<CR>
 func! CR()
-    if &filetype ==# 'cpp'
-        exec 'w'
-        exec '!clang++ % -O2 -Wall -std=c++17 -D DEBUG -o %<'
-        exec '! ./%< && rm ./%<'
-    endif
-    if &filetype ==# 'python'
-        exec 'w'
-        exec '!python3 %'
-    endif
-    if &filetype ==# 'sh'
-        exec 'w'
-        exec '!zsh %'
-    endif
+  if &filetype ==# 'cpp'
+    exec 'w'
+    exec '!clang++ % -O2 -Wall -std=c++17 -D DEBUG -o %<'
+    exec '! ./%< && rm ./%<'
+  endif
+  if &filetype ==# 'python'
+    exec 'w'
+    exec '!python3 %'
+  endif
+  if &filetype ==# 'sh'
+    exec 'w'
+    exec '!zsh %'
+  endif
 endfunc
 
 map <F8> : call CRR()<CR>
 func! CRR()
-    if &filetype ==# 'cpp'
-        exec 'w'
-        exec '!clang++ % -O2 -Wall -std=c++17 -D DEBUG -o %<'
-        exec '! ./%< < rand.in && rm ./%<'
-    endif
-    if &filetype ==# 'python'
-        exec 'w'
-        exec '!python3 %'
-    endif
+  if &filetype ==# 'cpp'
+    exec 'w'
+    exec '!clang++ % -O2 -Wall -std=c++17 -D DEBUG -o %<'
+    exec '! ./%< < rand.in && rm ./%<'
+  endif
+  if &filetype ==# 'python'
+    exec 'w'
+    exec '!python3 %'
+  endif
 endfunc
 
 map <F3> ggvG"+y
 
 augroup editfile
-    autocmd BufNewFile *.cpp,*.cc,*.[ch],*.sh,*.java,*.py exec ':call SetTitle()'
+  autocmd BufNewFile *.cpp,*.cc,*.[ch],*.sh,*.java,*.py exec ':call SetTitle()'
 augroup END
 
 func SetTitle()
-    if &filetype ==# 'sh'
-        call setline(1,'#########################################################################')
-        call append(line('.'), '# File Name: '.expand('%'))
-        call append(line('.')+1, '# Author: ghost_lzw')
-        call append(line('.')+2, '# mail: lanzongwei541@gmail.com')
-        call append(line('.')+3, '# Created Time: '.strftime('%c'))
-        call append(line('.')+4, '#########################################################################')
-        call append(line('.')+5, '#!/bin/bash')
-        call append(line('.')+6, '')
-    elseif &filetype !=# 'python'
-        call setline(1, '// Copyright '.strftime('%Y').' Ghost-LZW')
-        call append(line('.'), '// Author: lanzongwei541@gmail.com (ghost-lzw)')
-        call append(line('.')+1, '')
+  if &filetype == 'sh' || &filetype == 'python' || &filetype == 'perl'
+    if &filetype == 'python'
+      call setline(1, "\#!/usr/bin/env python3")
+    elseif &filetype == 'perl'
+      call setline(1, "\#!/usr/bin/env perl")
+    else
+      call setline(1, "\#!/usr/bin/env bash")
     endif
-    normal! G
+    call append(line("."), "#")
+    call append(line(".")+1, "# Copyright ".strftime("%Y")." {{ .name }}. All rights reserved.")
+    call append(line(".")+2, "# Author: {{ .name }} ({{ .email }})")
+    call append(line(".")+3, "")
+  elseif &filetype != 'python'
+    call setline(1, "// Copyright ".strftime("%Y")." {{ .name }}. All rights reserved.")
+    call append(line("."), "// Author: {{ .name }} ({{ .email }})")
+
+    if expand('%:e') ==? 'h' || expand('%:e') ==? 'hpp'
+      call append(line(".")+1, "")
+      call append(line(".")+2, "#ifndef HEADER_")
+      call append(line(".")+3, "#define HEADER_")
+      call append(line(".")+4, "")
+      call append(line(".")+5, "#endif")
+    endif
+  endif
+  if &filetype == 'c'
+    call append(line(".")+2, "#include<stdio.h>")
+    call append(line(".")+3, "")
+  endif
+  normal! G
 endfunc
+
+let g:copy_file=$HOME . "/.vim_copybuffer"
+function Write_copy_file()
+  let lines=split(@", "\n")
+  call writefile(lines,g:copy_file)
+endfunction
+
+function Read_copy_file()
+  let l:buf=readfile(g:copy_file)
+  let @"=join(l:buf,"\n")
+  normal ""p
+endfunction
+nmap <silent> ;y :call Write_copy_file()<Enter>
+nmap <silent> ;p :call Read_copy_file()<Enter>
