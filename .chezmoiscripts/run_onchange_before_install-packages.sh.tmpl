@@ -5,10 +5,11 @@ set -eufo pipefail
 sudo apt install tmux
 {{ else if eq .chezmoi.os "darwin" -}}
 {{ $brews := list
-    "tmux"
-    "coreutils"
-    "autojump" -}}
-{{ $casks := list -}}
+  "tmux"
+  "coreutils"
+  "autojump" -}}
+{{ $casks := list
+  "font-jetbrains-mono-nerd-font" -}}
 
 brew bundle --file=/dev/stdin <<EOF
 {{ range ($brews | sortAlpha | uniq) -}}
