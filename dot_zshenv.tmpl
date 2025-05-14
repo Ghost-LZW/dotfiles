@@ -2,6 +2,6 @@ export PATH=$HOME/bin:$HOME/.local/bin:$PATH
 {{- if eq .chezmoi.os "darwin" }}
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
-{{ end -}}
+{{- end }}
 
 export CMAKE_EXPORT_COMPILE_COMMANDS=1

@@ -1,9 +1,10 @@
 #!/bin/sh
-set -eufo pipefail
 
 {{ if eq .chezmoi.os "linux" -}}
+set -eufx
 sudo apt install tmux
 {{ else if eq .chezmoi.os "darwin" -}}
+set -eufo pipefail
 {{ $brews := list
   "tmux"
   "coreutils"
