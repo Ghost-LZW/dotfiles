@@ -162,11 +162,11 @@ augroup END
 func SetTitle()
   if &filetype ==# 'sh' || &filetype ==# 'python' || &filetype ==# 'perl'
     if &filetype ==# 'python'
-      call setline(1, '\#!/usr/bin/env python3')
+      call setline(1, '#!/usr/bin/env python3')
     elseif &filetype ==# 'perl'
-      call setline(1, '\#!/usr/bin/env perl')
+      call setline(1, '#!/usr/bin/env perl')
     else
-      call setline(1, '\#!/usr/bin/env bash')
+      call setline(1, '#!/usr/bin/env bash')
     endif
     call append(line('.'), '#')
     call append(line('.')+1, '# Copyright '.strftime('%Y').' {{ .name }}. All rights reserved.')
